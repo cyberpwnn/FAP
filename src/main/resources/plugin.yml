@@ -1,0 +1,5 @@
+name: FAP
+main: org.cyberpwn.fap.FAP
+version: ${project.version}
+authors: [cyberpwn]
+depend: [Phantom]

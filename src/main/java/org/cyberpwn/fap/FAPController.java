@@ -1,5 +1,6 @@
 package org.cyberpwn.fap;
 
+import org.cyberpwn.fap.handler.PistonHandler;
 import org.cyberpwn.fap.handler.TNTHandler;
 import org.phantomapi.async.A;
 import org.phantomapi.clust.AsyncConfig;
@@ -31,6 +32,7 @@ public class FAPController extends ConfigurableController
 	private GList<Operation> queued;
 	private static FAPController inst;
 	private TNTHandler tntHandler;
+	private PistonHandler pistonHandler;
 	private boolean running;
 	
 	public FAPController(Controllable parentController)
@@ -43,8 +45,10 @@ public class FAPController extends ConfigurableController
 		running = false;
 		
 		tntHandler = new TNTHandler();
+		pistonHandler = new PistonHandler();
 		
 		register(tntHandler);
+		register(pistonHandler);
 	}
 	
 	public void queueOperation(Operation operation)

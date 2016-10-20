@@ -5,8 +5,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 import org.cyberpwn.fap.FAPController;
 import org.cyberpwn.fap.FAPOperator;
+import org.phantomapi.sync.S;
 import org.phantomapi.world.W;
 
 public class OperationTNT extends FAPOperator
@@ -31,15 +33,31 @@ public class OperationTNT extends FAPOperator
 		{
 			Block b = w.getBlockAt(i.getX(), i.getY(), i.getZ());
 			
-			FAPController.wq.set(b.getLocation(), Material.AIR);
+			if(b.getType().equals(Material.CHEST) || b.getType().equals(Material.TRAPPED_CHEST))
+			{
+				new S()
+				{
+					@Override
+					public void sync()
+					{
+						System.out.println("Breaking Chest");
+						W.toSync(b).breakNaturally(new ItemStack(Material.DIAMOND_AXE));
+					}
+				};
+			}
+			
+			else
+			{
+				FAPController.wq.set(b.getLocation(), Material.AIR);
+			}
 		}
 	}
-
+	
 	public Location getLocation()
 	{
 		return location;
 	}
-
+	
 	public float getPower()
 	{
 		return power;

@@ -8,7 +8,9 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.cyberpwn.fap.FAPController;
 import org.cyberpwn.fap.FAPOperator;
+import org.phantomapi.lang.GMap;
 import org.phantomapi.sync.S;
+import org.phantomapi.world.Blocks;
 import org.phantomapi.world.W;
 
 public class OperationTNT extends FAPOperator
@@ -28,6 +30,7 @@ public class OperationTNT extends FAPOperator
 	public void operate()
 	{
 		World w = W.getAsyncWorld(location.getWorld().getName());
+		GMap<Location, Material> matte = new GMap<Location, Material>();
 		
 		for(Block i : blocks)
 		{
@@ -48,6 +51,72 @@ public class OperationTNT extends FAPOperator
 			else
 			{
 				FAPController.wq.set(b.getLocation(), Material.AIR);
+				matte.put(b.getLocation(), b.getType());
+			}
+		}
+		
+		for(Location i : matte.k())
+		{
+			for(Block j : W.blockFaces(i.getBlock()))
+			{
+				if(matte.contains(j))
+				{
+					continue;
+				}
+				
+				if(j.getType().equals(Material.AIR))
+				{
+					continue;
+				}
+				
+				if(j.isBlockPowered() || j.isBlockIndirectlyPowered())
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
+				
+				if(j.getType().toString().contains("REDSTONE"))
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
+				
+				if(j.getType().toString().contains("COMPARATOR"))
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
+				
+				if(j.getType().toString().contains("DIODE"))
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
+				
+				if(j.getType().toString().contains("WATER"))
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
+				
+				if(j.getType().toString().contains("LAVA"))
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
+				
+				if(!j.getType().isSolid())
+				{
+					Blocks.update(i.getBlock());
+					Blocks.update(j);
+					continue;
+				}
 			}
 		}
 	}

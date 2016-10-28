@@ -40,7 +40,6 @@ public class OperationTNT extends FAPOperator
 					@Override
 					public void sync()
 					{
-						System.out.println("Breaking Chest");
 						W.toSync(b).breakNaturally(new ItemStack(Material.DIAMOND_AXE));
 					}
 				};

@@ -166,7 +166,6 @@ public class PistonHandler extends FAPHandler implements Monitorable
 		for(Entity i : a.getNearbyEntities())
 		{
 			i.setVelocity(new Vector(bf.getModX(), bf.getModY(), bf.getModZ()).multiply(0.4));
-			s("Pushing " + i.getName());
 		}
 	}
 	

@@ -24,10 +24,6 @@ public class FAPController extends ConfigurableController
 	@Keyed("fap.feature.tnt")
 	public boolean handleTNT = true;
 	
-	@Comment("Should fire be handled with the fire handler? Set to false for bukkit.")
-	@Keyed("fap.feature.fire")
-	public boolean handleFire = true;
-	
 	@Comment("Should pistons be handled with the piston handler? Set to false for bukkit.")
 	@Keyed("fap.feature.pistons")
 	public boolean handlePistons = true;

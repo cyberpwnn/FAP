@@ -69,6 +69,15 @@ public class PistonHandler extends FAPHandler implements Monitorable
 		GList<Block> blocks = new GList<Block>(e.getBlocks());
 		Block piston = e.getBlock();
 		
+		for(Block i : blocks.copy())
+		{
+			if(!i.getType().isSolid())
+			{
+				i.breakNaturally();
+				blocks.remove(i);
+			}
+		}
+		
 		for(Block i : blocks)
 		{
 			FAPController.wq.set(i.getLocation(), Material.AIR);

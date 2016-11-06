@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -73,11 +74,18 @@ public class PistonHandler extends FAPHandler implements Monitorable
 			FAPController.wq.set(i.getLocation(), Material.AIR);
 		}
 		
+		if(pushEntities)
+		{
+			push(piston, face);
+		}
+		
 		for(Block i : blocks)
 		{
 			if(pushEntities)
 			{
 				push(i, face);
+				push(i.getRelative(BlockFace.DOWN), face);
+				push(i.getRelative(BlockFace.UP), face);
 			}
 			
 			FAPController.wq.set(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), i.getType(), i.getData());
@@ -160,12 +168,15 @@ public class PistonHandler extends FAPHandler implements Monitorable
 	
 	public void push(Block b, BlockFace bf)
 	{
-		Location l = b.getLocation();
-		Area a = new Area(l.clone().add(0.5, 0.5, 0.5), 1.7);
+		Location l = b.getRelative(bf).getLocation();
+		Area a = new Area(l.clone().add(0.5, 0.5, 0.5), 0.9);
 		
 		for(Entity i : a.getNearbyEntities())
 		{
-			i.setVelocity(new Vector(bf.getModX(), bf.getModY(), bf.getModZ()).multiply(0.4));
+			if(i instanceof LivingEntity)
+			{
+				i.setVelocity(new Vector(bf.getModX(), bf.getModY(), bf.getModZ()).multiply(0.6));
+			}
 		}
 	}
 	

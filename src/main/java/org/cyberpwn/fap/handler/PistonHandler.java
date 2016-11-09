@@ -71,7 +71,7 @@ public class PistonHandler extends FAPHandler implements Monitorable
 		
 		for(Block i : blocks.copy())
 		{
-			if(!i.getType().isSolid())
+			if(!i.getType().isSolid() || i.getType().equals(Material.MELON_BLOCK))
 			{
 				i.breakNaturally();
 				blocks.remove(i);

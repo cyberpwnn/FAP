@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.cyberpwn</groupId>
 	<artifactId>fap</artifactId>
-	<version>2.3</version>
+	<version>2.4</version>
 	<name>FAP</name>
 	<description>Fast Async Physics</description>
 	<properties>

@@ -13,7 +13,7 @@ import org.phantomapi.construct.Ticked;
 import org.phantomapi.lang.GList;
 import org.phantomapi.world.PhantomWorldQueue;
 
-@Ticked(5)
+@Ticked(20)
 @AsyncConfig
 public class FAPController extends ConfigurableController
 {

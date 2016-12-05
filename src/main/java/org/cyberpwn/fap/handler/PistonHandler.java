@@ -64,68 +64,61 @@ public class PistonHandler extends FAPHandler implements Monitorable
 		
 		e.setCancelled(true);
 		
+		new GSound(Sound.PISTON_EXTEND, 1f, 1.5f).play(e.getBlock().getLocation());
+		BlockFace face = e.getDirection();
+		GList<Block> blocks = new GList<Block>(e.getBlocks());
+		Block piston = e.getBlock();
+		
+		for(Block i : blocks.copy())
+		{
+			if(!i.getType().isSolid() || i.getType().equals(Material.MELON_BLOCK))
+			{
+				i.breakNaturally();
+				blocks.remove(i);
+			}
+		}
+		
+		for(Block i : blocks)
+		{
+			FAPController.wq.set(i.getLocation(), Material.AIR);
+		}
+		
+		if(pushEntities)
+		{
+			push(piston, face);
+		}
+		
+		for(Block i : blocks)
+		{
+			if(pushEntities)
+			{
+				push(i, face);
+				push(i.getRelative(BlockFace.DOWN), face);
+				push(i.getRelative(BlockFace.UP), face);
+			}
+			
+			FAPController.wq.set(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), i.getType(), i.getData());
+		}
+		
+		PistonExtensionMaterial pem = new PistonExtensionMaterial(Material.PISTON_EXTENSION);
+		PistonBaseMaterial pbm = (PistonBaseMaterial) piston.getState().getData();
+		pbm.setPowered(true);
+		pem.setSticky(pbm.isSticky());
+		pem.setFacingDirection(pbm.getFacing());
+		
+		FAPController.wq.set(piston.getLocation(), pbm.getItemType(), pbm.getData());
+		FAPController.wq.set(piston.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), Material.PISTON_EXTENSION, pem.getData());
+		FAPController.wq.flush();
+		
 		new TaskLater(2)
 		{
 			@Override
 			public void run()
 			{
-				new GSound(Sound.PISTON_EXTEND, 1f, 1.5f).play(e.getBlock().getLocation());
-				BlockFace face = e.getDirection();
-				GList<Block> blocks = new GList<Block>(e.getBlocks());
-				Block piston = e.getBlock();
-				
-				for(Block i : blocks.copy())
-				{
-					if(!i.getType().isSolid() || i.getType().equals(Material.MELON_BLOCK))
-					{
-						i.breakNaturally();
-						blocks.remove(i);
-					}
-				}
-				
 				for(Block i : blocks)
 				{
-					FAPController.wq.set(i.getLocation(), Material.AIR);
+					update(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()).getBlock());
 				}
-				
-				if(pushEntities)
-				{
-					push(piston, face);
-				}
-				
-				for(Block i : blocks)
-				{
-					if(pushEntities)
-					{
-						push(i, face);
-						push(i.getRelative(BlockFace.DOWN), face);
-						push(i.getRelative(BlockFace.UP), face);
-					}
-					
-					FAPController.wq.set(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), i.getType(), i.getData());
-				}
-				
-				PistonExtensionMaterial pem = new PistonExtensionMaterial(Material.PISTON_EXTENSION);
-				PistonBaseMaterial pbm = (PistonBaseMaterial) piston.getState().getData();
-				pbm.setPowered(true);
-				pem.setSticky(pbm.isSticky());
-				pem.setFacingDirection(pbm.getFacing());
-				
-				FAPController.wq.set(piston.getLocation(), pbm.getItemType(), pbm.getData());
-				FAPController.wq.set(piston.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), Material.PISTON_EXTENSION, pem.getData());
-				FAPController.wq.flush();
-				
-				new TaskLater(2)
-				{
-					@Override
-					public void run()
-					{
-						for(Block i : blocks)
-						{
-							update(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()).getBlock());
-						}
-					}
-				};
 			}
 		};
 	}
@@ -141,50 +134,43 @@ public class PistonHandler extends FAPHandler implements Monitorable
 		
 		e.setCancelled(true);
 		
-		new TaskLater(4)
+		new GSound(Sound.PISTON_RETRACT, 1f, 1.5f).play(e.getBlock().getLocation());
+		BlockFace face = e.isSticky() ? e.getDirection().getOppositeFace() : e.getDirection();
+		GList<Block> blocks = new GList<Block>(e.getBlocks());
+		Block piston = e.getBlock();
+		PistonBaseMaterial pbm = new PistonBaseMaterial(e.isSticky() ? Material.PISTON_STICKY_BASE : Material.PISTON_BASE);
+		pbm.setPowered(false);
+		pbm.setFacingDirection(face);
+		FAPController.wq.set(piston.getLocation(), pbm.getItemType(), pbm.getData());
+		FAPController.wq.set(piston.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), Material.AIR);
+		face = face.getOppositeFace();
+		
+		for(Block i : blocks)
+		{
+			FAPController.wq.set(i.getLocation(), Material.AIR);
+		}
+		
+		for(Block i : blocks)
+		{
+			FAPController.wq.set(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), i.getType(), i.getData());
+		}
+		
+		FAPController.wq.flush();
+		
+		if(usePhoton)
+		{
+			Photon.relight(e.getBlock());
+		}
+		
+		new TaskLater(2)
 		{
 			@Override
 			public void run()
 			{
-				new GSound(Sound.PISTON_RETRACT, 1f, 1.5f).play(e.getBlock().getLocation());
-				BlockFace face = e.isSticky() ? e.getDirection().getOppositeFace() : e.getDirection();
-				GList<Block> blocks = new GList<Block>(e.getBlocks());
-				Block piston = e.getBlock();
-				PistonBaseMaterial pbm = new PistonBaseMaterial(e.isSticky() ? Material.PISTON_STICKY_BASE : Material.PISTON_BASE);
-				pbm.setPowered(false);
-				pbm.setFacingDirection(face);
-				FAPController.wq.set(piston.getLocation(), pbm.getItemType(), pbm.getData());
-				FAPController.wq.set(piston.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), Material.AIR);
-				face = face.getOppositeFace();
-				
 				for(Block i : blocks)
 				{
-					FAPController.wq.set(i.getLocation(), Material.AIR);
+					update(i);
 				}
-				
-				for(Block i : blocks)
-				{
-					FAPController.wq.set(i.getLocation().clone().add(face.getModX(), face.getModY(), face.getModZ()), i.getType(), i.getData());
-				}
-				
-				FAPController.wq.flush();
-				
-				if(usePhoton)
-				{
-					Photon.relight(e.getBlock());
-				}
-				
-				new TaskLater(2)
-				{
-					@Override
-					public void run()
-					{
-						for(Block i : blocks)
-						{
-							update(i);
-						}
-					}
-				};
 			}
 		};
 	}
